@@ -568,27 +568,247 @@ export default function AdminSettings() {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex min-h-screen">
+        {/* Mobile Overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <aside
           className={`${
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          } fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-border pt-20 transform transition-transform md:translate-x-0 md:static md:pt-0`}
+          } fixed inset-y-0 left-0 z-50 w-80 bg-white dark:bg-slate-900 border-r border-border pt-20 transform transition-transform md:translate-x-0 md:static md:pt-0 md:w-72 lg:w-80`}
         >
-          <nav className="p-4 space-y-2">
-            <Link
-              href="/admin/dashboard"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-muted text-foreground"
-            >
-              <Settings size={20} />
-              <span>Back to Dashboard</span>
-            </Link>
+          <nav className="p-4 h-full overflow-y-auto">
+            {/* Back to Dashboard Link */}
+            <div className="mb-6">
+              <Link
+                href="/admin/dashboard"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-muted text-foreground"
+              >
+                <Settings size={20} />
+                <span>Back to Dashboard</span>
+              </Link>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="space-y-4">
+              {/* Content Settings Group */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 px-2 py-2 bg-muted/50 rounded-lg">
+                  <FolderOpen className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Konten</span>
+                </div>
+                <div className="space-y-1">
+                  <button
+                    onClick={() => {
+                      setActiveTab('school-info')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'school-info'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Building2 className="w-4 h-4 shrink-0" />
+                    <span>Info Sekolah</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('vision-mission')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'vision-mission'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Target className="w-4 h-4 shrink-0" />
+                    <span>Visi Misi</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('programs')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'programs'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <BookOpen className="w-4 h-4 shrink-0" />
+                    <span>Program</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('facilities')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'facilities'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Award className="w-4 h-4 shrink-0" />
+                    <span>Fasilitas</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('ekskul')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'ekskul'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Users className="w-4 h-4 shrink-0" />
+                    <span>Ekskul</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('contact')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'contact'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Phone className="w-4 h-4 shrink-0" />
+                    <span>Kontak</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('footer')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'footer'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Globe className="w-4 h-4 shrink-0" />
+                    <span>Footer</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Program Settings Group */}
+              {canAccessProgramContent && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2 py-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                    <GraduationCapIcon className="w-4 h-4 text-yellow-600" />
+                    <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">Program</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveTab('program-content')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'program-content'
+                        ? 'bg-yellow-500 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <FileText className="w-4 h-4 shrink-0" />
+                    <span>Konten Program</span>
+                  </button>
+                </div>
+              )}
+
+              {/* PPDB & Features Group */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 px-2 py-2 bg-muted/50 rounded-lg">
+                  <Zap className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fitur</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setActiveTab('hybrid')
+                    setMobileMenuOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                    activeTab === 'hybrid'
+                      ? 'bg-blue-900 text-white shadow-md'
+                      : 'text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <Star className="w-4 h-4 shrink-0" />
+                  <span>Hybrid</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab('ppdb')
+                    setMobileMenuOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                    activeTab === 'ppdb'
+                      ? 'bg-blue-900 text-white shadow-md'
+                      : 'text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <Star className="w-4 h-4 shrink-0" />
+                  <span>PPDB</span>
+                </button>
+              </div>
+
+              {/* Admin Only Group */}
+              {canAccessAll && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <Eye className="w-4 h-4 text-blue-600" />
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">Admin</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveTab('visitor-stats')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'visitor-stats'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <BarChart3 className="w-4 h-4 shrink-0" />
+                    <span>Statistik Pengunjung</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab('user-logs')
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm ${
+                      activeTab === 'user-logs'
+                        ? 'bg-blue-900 text-white shadow-md'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Activity className="w-4 h-4 shrink-0" />
+                    <span>Logs Aktivitas</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto">
             {/* Page Header */}
             <div className="mb-6 md:mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -606,96 +826,6 @@ export default function AdminSettings() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              {/* Tab Navigation */}
-              <ScrollArea className="w-full border rounded-lg p-2 bg-muted/30">
-                <div className="min-w-max pb-2">
-                  <div className="flex flex-wrap gap-2">
-                    {/* Content Settings Group */}
-                    <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-lg border">
-                      <FolderOpen className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Konten</span>
-                      <Separator orientation="vertical" className="h-4 mx-1" />
-                    </div>
-                    <TabsTrigger value="school-info" className="text-xs py-2.5 px-4">
-                      <Building2 className="w-4 h-4 mr-2" />
-                      <span>Info Sekolah</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="vision-mission" className="text-xs py-2.5 px-4">
-                      <Target className="w-4 h-4 mr-2" />
-                      <span>Visi Misi</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="programs" className="text-xs py-2.5 px-4">
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      <span>Program</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="facilities" className="text-xs py-2.5 px-4">
-                      <Award className="w-4 h-4 mr-2" />
-                      <span>Fasilitas</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="ekskul" className="text-xs py-2.5 px-4">
-                      <Users className="w-4 h-4 mr-2" />
-                      <span>Ekskul</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="contact" className="text-xs py-2.5 px-4">
-                      <Phone className="w-4 h-4 mr-2" />
-                      <span>Kontak</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="footer" className="text-xs py-2.5 px-4">
-                      <Globe className="w-4 h-4 mr-2" />
-                      <span>Footer</span>
-                    </TabsTrigger>
-
-                    {/* Program Settings Group */}
-                    {canAccessProgramContent && (
-                      <>
-                        <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-lg border ml-2">
-                          <GraduationCapIcon className="w-4 h-4 text-yellow-600" />
-                          <span className="text-xs font-medium text-yellow-600 uppercase tracking-wide">Program</span>
-                          <Separator orientation="vertical" className="h-4 mx-1" />
-                        </div>
-                        <TabsTrigger value="program-content" className="text-xs py-2.5 px-4 bg-yellow-500 hover:bg-yellow-600 text-white data-[state=active]:bg-yellow-600">
-                          <FileText className="w-4 h-4 mr-2" />
-                          <span>Konten Program</span>
-                        </TabsTrigger>
-                      </>
-                    )}
-
-                    {/* PPDB & Features Group */}
-                    <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-lg border ml-2">
-                      <Zap className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fitur</span>
-                      <Separator orientation="vertical" className="h-4 mx-1" />
-                    </div>
-                    <TabsTrigger value="hybrid" className="text-xs py-2.5 px-4">
-                      <Star className="w-4 h-4 mr-2" />
-                      <span>Hybrid</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="ppdb" className="text-xs py-2.5 px-4">
-                      <Star className="w-4 h-4 mr-2" />
-                      <span>PPDB</span>
-                    </TabsTrigger>
-
-                    {/* Admin Only Group */}
-                    {canAccessAll && (
-                      <>
-                        <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-lg border ml-2">
-                          <Eye className="w-4 h-4 text-blue-600" />
-                          <span className="text-xs font-medium text-blue-600 uppercase tracking-wide">Admin</span>
-                          <Separator orientation="vertical" className="h-4 mx-1" />
-                        </div>
-                        <TabsTrigger value="visitor-stats" className="text-xs py-2.5 px-4 bg-blue-900 hover:bg-blue-800 text-white data-[state=active]:bg-blue-800">
-                          <BarChart3 className="w-4 h-4 mr-2" />
-                          <span>Statistik</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="user-logs" className="text-xs py-2.5 px-4 bg-blue-900 hover:bg-blue-800 text-white data-[state=active]:bg-blue-800">
-                          <Activity className="w-4 h-4 mr-2" />
-                          <span>Logs</span>
-                        </TabsTrigger>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </ScrollArea>
 
               {/* School Info Tab */}
               <TabsContent value="school-info">
