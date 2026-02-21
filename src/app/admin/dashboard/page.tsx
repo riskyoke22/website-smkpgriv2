@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { GraduationCap, LogOut, Menu, X, Newspaper, Image as ImageIcon, Users, LayoutDashboard, Plus, Edit2, Trash2, Loader2, Settings, UserCog } from 'lucide-react'
+import { GraduationCap, LogOut, Menu, X, Newspaper, Image as ImageIcon, Users, LayoutDashboard, Plus, Edit2, Trash2, Loader2, Settings, UserCog, FileText, BarChart3 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -36,7 +36,7 @@ interface Stats {
 export default function AdminDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'berita' | 'galeri' | 'users'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'berita' | 'dokumen-kegiatan' | 'galeri' | 'users'>('dashboard')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [stats, setStats] = useState<Stats>({ beritaCount: 0, galeriCount: 0 })
   const [beritaList, setBeritaList] = useState<Berita[]>([])
@@ -195,6 +195,14 @@ export default function AdminDashboard() {
               <LayoutDashboard size={20} />
               <span>Dashboard</span>
             </button>
+            <Link
+              href="/admin/analytics"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-muted"
+            >
+              <BarChart3 size={20} />
+              <span>Analytics</span>
+            </Link>
             <button
               onClick={() => { setActiveTab('berita'); setMobileMenuOpen(false) }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
@@ -206,6 +214,14 @@ export default function AdminDashboard() {
               <Newspaper size={20} />
               <span>Berita</span>
             </button>
+            <Link
+              href="/admin/dokumen-kegiatan"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-muted"
+            >
+              <FileText size={20} />
+              <span>Dokumen Kegiatan</span>
+            </Link>
             <button
               onClick={() => { setActiveTab('galeri'); setMobileMenuOpen(false) }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${

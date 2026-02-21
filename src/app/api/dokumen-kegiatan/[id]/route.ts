@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
-
-const prisma = new PrismaClient()
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const dokumen = await (prisma as any).dokumenKegiatan.findUnique({
+    const dokumen = await db.dokumenKegiatan.findUnique({
       where: { id }
     })
 
@@ -36,7 +34,7 @@ export async function PUT(
     const { judulKegiatan, deskripsi, fileJuklak, fileJuknis, status } = body
 
     if (status === true) {
-      await (prisma as any).dokumenKegiatan.updateMany({
+      await db.dokumenKegiatan.updateMany({
         where: {
           AND: [
             { status: true },
@@ -47,7 +45,7 @@ export async function PUT(
       })
     }
 
-    const dokumen = await (prisma as any).dokumenKegiatan.update({
+    const dokumen = await db.dokumenKegiatan.update({
       where: { id },
       data: {
         ...(judulKegiatan !== undefined && { judulKegiatan }),
@@ -71,7 +69,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    await (prisma as any).dokumenKegiatan.delete({
+    await db.dokumenKegiatan.delete({
       where: { id }
     })
 

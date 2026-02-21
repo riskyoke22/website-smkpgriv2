@@ -20,6 +20,7 @@ model User {
   role      String   @default("admin")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userLogs  UserLog[]
 }
 
 model Setting {
@@ -72,6 +73,7 @@ model UserLog {
   action    String
   details   String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Berita {
@@ -100,4 +102,13 @@ model DokumenKegiatan {
   status      Boolean  @default(false) // true = aktif, false = nonaktif
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ClickAnalytics {
+  id          String   @id @default(cuid())
+  userId      String?
+  contentType String
+  contentName String
+  contentId   String?
+  clickedAt   DateTime @default(now())
 }

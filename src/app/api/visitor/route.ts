@@ -7,11 +7,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { ip, userAgent } = body;
 
-    // Create visitor log using raw query
-    await db.$executeRaw(
-      'INSERT INTO VisitorLog (ip, userAgent, visitedAt) VALUES (?, ?, datetime("now"))',
-      [ip || null, userAgent || null]
-    );
+    // Create visitor log using Prisma
+    await db.visitorLog.create({
+      data: {
+        ip: ip || null,
+        userAgent: userAgent || null,
+      }
+    });
 
     return NextResponse.json({
       success: true,
@@ -32,66 +34,58 @@ export async function POST(request: NextRequest) {
 // GET: Get visitor statistics
 export async function GET() {
   try {
-    // Get total visits
-    const totalVisitsResult = await db.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(*) as count FROM VisitorLog
-    `;
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Get today's visits
-    const todayVisitsResult = await db.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(*) as count FROM VisitorLog
-      WHERE date(visitedAt) = date('now')
-    `;
+    // Get all visitor logs
+    const allVisits = await db.visitorLog.findMany({
+      where: {},
+      select: {
+        id: true,
+        ip: true,
+        visitedAt: true,
+      },
+    });
 
-    // Get this week's visits
-    const weekVisitsResult = await db.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(*) as count FROM VisitorLog
-      WHERE visitedAt >= date('now', '-7 days')
-    `;
+    // Calculate statistics
+    const totalVisits = allVisits.length;
+    const todayVisits = allVisits.filter(v => new Date(v.visitedAt) >= today).length;
+    const weekVisits = allVisits.filter(v => new Date(v.visitedAt) >= weekAgo).length;
+    const monthVisits = allVisits.filter(v => new Date(v.visitedAt) >= monthAgo).length;
 
-    // Get this month's visits
-    const monthVisitsResult = await db.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(*) as count FROM VisitorLog
-      WHERE visitedAt >= date('now', '-1 month')
-    `;
-
-    // Get unique visitors
-    const uniqueVisitorsResult = await db.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(DISTINCT ip) as count FROM VisitorLog
-      WHERE ip IS NOT NULL
-    `;
+    // Get unique visitors (by IP)
+    const uniqueIPs = new Set(allVisits.filter(v => v.ip).map(v => v.ip));
+    const uniqueVisitors = uniqueIPs.size;
 
     // Get visits per day for the last 7 days
     const dailyVisits = [];
     for (let i = 6; i >= 0; i--) {
-      const dateResult = await db.$queryRaw<Array<{ date: string, count: bigint }>>`
-        SELECT date(visitedAt) as date, COUNT(*) as count
-        FROM VisitorLog
-        WHERE date(visitedAt) = date('now', '${i} days')
-        GROUP BY date(visitedAt)
-      `;
-      
-      if (dateResult.length > 0) {
-        dailyVisits.push({
-          date: dateResult[0].date,
-          count: Number(dateResult[0].count),
-        });
-      } else {
-        dailyVisits.push({
-          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          count: 0,
-        });
-      }
+      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+
+      const count = allVisits.filter(v => {
+        const visitDate = new Date(v.visitedAt);
+        return visitDate >= dayStart && visitDate < dayEnd;
+      }).length;
+
+      dailyVisits.push({
+        date: dateStr,
+        count,
+      });
     }
 
     return NextResponse.json({
       success: true,
       data: {
-        totalVisits: Number(totalVisitsResult[0]?.count || 0),
-        todayVisits: Number(todayVisitsResult[0]?.count || 0),
-        weekVisits: Number(weekVisitsResult[0]?.count || 0),
-        monthVisits: Number(monthVisitsResult[0]?.count || 0),
-        uniqueVisitors: Number(uniqueVisitorsResult[0]?.count || 0),
+        totalVisits,
+        todayVisits,
+        weekVisits,
+        monthVisits,
+        uniqueVisitors,
         dailyVisits,
       },
     });
@@ -106,3 +100,4 @@ export async function GET() {
     );
   }
 }
+

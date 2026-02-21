@@ -47,86 +47,89 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get total logs
-    const totalLogsResult = await db.$queryRaw<Array<{ count: bigint }>>(
-      'SELECT COUNT(*) as count FROM UserLog'
-    );
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Get today's logs
-    const todayLogsResult = await db.$queryRaw<Array<{ count: bigint }>>(
-      'SELECT COUNT(*) as count FROM UserLog WHERE date(createdAt) = date("now")'
-    );
+    // Get all user logs with user information
+    const allLogs = await db.userLog.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+          },
+        },
+      },
+    });
 
-    // Get this week's logs
-    const weekLogsResult = await db.$queryRaw<Array<{ count: bigint }>>(
-      'SELECT COUNT(*) as count FROM UserLog WHERE createdAt >= date("now", "-7 days")'
-    );
-
-    // Get this month's logs
-    const monthLogsResult = await db.$queryRaw<Array<{ count: bigint }>>(
-      'SELECT COUNT(*) as count FROM UserLog WHERE createdAt >= date("now", "-1 month")'
-    );
+    // Calculate statistics
+    const totalLogs = allLogs.length;
+    const todayLogs = allLogs.filter(l => new Date(l.createdAt) >= today).length;
+    const weekLogs = allLogs.filter(l => new Date(l.createdAt) >= weekAgo).length;
+    const monthLogs = allLogs.filter(l => new Date(l.createdAt) >= monthAgo).length;
 
     // Get unique users who performed actions
-    const uniqueUsersResult = await db.$queryRaw<Array<{ count: bigint }>>(
-      'SELECT COUNT(DISTINCT userId) as count FROM UserLog'
-    );
+    const uniqueUserIds = new Set(allLogs.map(l => l.userId));
+    const uniqueUsers = uniqueUserIds.size;
 
-    // Get most active users and top actions
-    const userCountsResult = await db.$queryRaw<Array<{ userId: string, count: bigint }>>(
-      'SELECT userId, COUNT(*) as count FROM UserLog GROUP BY userId ORDER BY count DESC LIMIT 10'
-    );
-    const actionCountsResult = await db.$queryRaw<Array<{ action: string, count: bigint }>>(
-      'SELECT action, COUNT(*) as count FROM UserLog GROUP BY action ORDER BY count DESC LIMIT 10'
-    );
+    // Get top actions
+    const actionCountsMap = new Map<string, number>();
+    allLogs.forEach(l => {
+      const count = actionCountsMap.get(l.action) || 0;
+      actionCountsMap.set(l.action, count + 1);
+    });
+    const topActions = Array.from(actionCountsMap.entries())
+      .map(([action, count]) => ({ action, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
 
-    // Get top users with their usernames
-    const topUsers = await Promise.all(
-      userCountsResult.map(async (item: any) => {
-        const userResult = await db.$queryRaw<Array<{ username: string, role: string }>>(
-          'SELECT username, role FROM User WHERE id = ?',
-          [item.userId]
-        );
-        return {
-          user: userResult[0] || null,
-          count: Number(item.count),
-        };
-      })
-    );
-
-    const topActions = actionCountsResult.map((item: any) => ({
-      action: item.action,
-      count: Number(item.count),
-    }));
+    // Get top users
+    const userCountsMap = new Map<string, { user: any; count: number }>();
+    allLogs.forEach(l => {
+      const existing = userCountsMap.get(l.userId);
+      if (existing) {
+        existing.count++;
+      } else {
+        userCountsMap.set(l.userId, {
+          user: l.user || { username: 'Unknown', role: 'Unknown' },
+          count: 1,
+        });
+      }
+    });
+    const topUsers = Array.from(userCountsMap.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
 
     // Get logs per day for the last 7 days
     const dailyLogs = [];
     for (let i = 6; i >= 0; i--) {
-      const dateResult = await db.$queryRaw<Array<{ date: string, count: bigint }>>(
-        'SELECT date(createdAt) as date, COUNT(*) as count FROM UserLog WHERE date(createdAt) = date("now", "' + i + ' days") GROUP BY date(createdAt)'
-      );
+      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-      if (dateResult.length > 0) {
-        dailyLogs.push({
-          date: dateResult[0].date,
-          count: Number(dateResult[0].count),
-        });
-      } else {
-        dailyLogs.push({
-          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          count: 0,
-        });
-      }
+      const count = allLogs.filter(l => {
+        const logDate = new Date(l.createdAt);
+        return logDate >= dayStart && logDate < dayEnd;
+      }).length;
+
+      dailyLogs.push({
+        date: dateStr,
+        count,
+      });
     }
 
     return NextResponse.json({
       success: true,
       data: {
-        totalLogs: Number(totalLogsResult[0]?.count || 0),
-        todayLogs: Number(todayLogsResult[0]?.count || 0),
-        weekLogs: Number(weekLogsResult[0]?.count || 0),
-        monthLogs: Number(monthLogsResult[0]?.count || 0),
-        uniqueUsers: Number(uniqueUsersResult[0]?.count || 0),
+        totalLogs,
+        todayLogs,
+        weekLogs,
+        monthLogs,
+        uniqueUsers,
         topActions,
         topUsers,
         dailyLogs,

@@ -177,6 +177,7 @@ export default function Home() {
                 href="https://lms.smkbimari.sch.id/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackClick('external', 'LMS')}
                 className={`font-medium text-sm transition-colors hover:text-yellow-500 ${
                   isScrolled ? 'text-foreground' : 'text-white'
                 }`}
@@ -227,6 +228,7 @@ export default function Home() {
                 href="https://lms.smkbimari.sch.id/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackClick('external', 'LMS Mobile')}
                 className="block w-full text-left px-4 py-3.5 text-foreground hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors font-medium text-base"
               >
                 LMS
@@ -413,6 +415,7 @@ export default function Home() {
                 <p className="text-sm sm:text-base text-foreground/70 leading-relaxed mb-4 sm:mb-6 flex-grow">{program.desc}</p>
                 <a
                   href={program.link}
+                  onClick={() => trackClick('program', program.title)}
                   className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors text-sm"
                 >
                   Lihat Detail
@@ -653,63 +656,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Informasi Kegiatan Section */}
-      {!loadingKegiatan && dokumenKegiatan && (
-        <section id="kegiatan" className="py-12 sm:py-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12">
-              <Badge variant="secondary" className="mb-4 bg-yellow-500 text-white border-yellow-400">
-                <Sparkles className="w-3 h-3 mr-1" />
-                Kegiatan Terkini
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                {dokumenKegiatan.judulKegiatan}
-              </h2>
-            </div>
-
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl">
-                <div className="mb-6 sm:mb-8">
-                  <p className="text-sm sm:text-base md:text-lg text-foreground/80 leading-relaxed">
-                    {dokumenKegiatan.deskripsi}
-                  </p>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {dokumenKegiatan.fileJuklak && (
-                    <a
-                      href={dokumenKegiatan.fileJuklak}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackClick('download', 'Juklak', dokumenKegiatan.id)}
-                      className="group flex items-center justify-center gap-3 px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
-                    >
-                      <FilePdf className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
-                      <span className="text-sm sm:text-base">Download Juklak</span>
-                      <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                    </a>
-                  )}
-
-                  {dokumenKegiatan.fileJuknis && (
-                    <a
-                      href={dokumenKegiatan.fileJuknis}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackClick('download', 'Juknis', dokumenKegiatan.id)}
-                      className="group flex items-center justify-center gap-3 px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
-                    >
-                      <FilePdf className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
-                      <span className="text-sm sm:text-base">Download Juknis</span>
-                      <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Berita Section */}
       <section id="berita" className="py-12 sm:py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -788,6 +734,63 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* Informasi Kegiatan Section */}
+      {!loadingKegiatan && dokumenKegiatan && (
+        <section id="kegiatan" className="py-12 sm:py-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-4 bg-yellow-500 text-white border-yellow-400">
+                <Sparkles className="w-3 h-3 mr-1" />
+                Kegiatan Terkini
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+                {dokumenKegiatan.judulKegiatan}
+              </h2>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl">
+                <div className="mb-6 sm:mb-8">
+                  <p className="text-sm sm:text-base md:text-lg text-foreground/80 leading-relaxed">
+                    {dokumenKegiatan.deskripsi}
+                  </p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {dokumenKegiatan.fileJuklak && (
+                    <a
+                      href={dokumenKegiatan.fileJuklak}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackClick('download', 'Juklak', dokumenKegiatan.id)}
+                      className="group flex items-center justify-center gap-3 px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                      <FilePdf className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
+                      <span className="text-sm sm:text-base">Download Juklak</span>
+                      <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                  )}
+
+                  {dokumenKegiatan.fileJuknis && (
+                    <a
+                      href={dokumenKegiatan.fileJuknis}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackClick('download', 'Juknis', dokumenKegiatan.id)}
+                      className="group flex items-center justify-center gap-3 px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                      <FilePdf className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
+                      <span className="text-sm sm:text-base">Download Juknis</span>
+                      <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Galeri Section */}
       <section id="galeri" className="py-12 sm:py-20">
@@ -913,6 +916,7 @@ export default function Home() {
                     href="https://www.tiktok.com/@smkpgriwonoasri"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick('social', 'TikTok')}
                     className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-gray-800 to-black text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform"
                     aria-label="TikTok"
                   >
@@ -922,6 +926,7 @@ export default function Home() {
                     href="https://www.instagram.com/@smkpgriwonoasri"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick('social', 'Instagram')}
                     className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform"
                     aria-label="Instagram"
                   >
@@ -931,6 +936,7 @@ export default function Home() {
                     href="https://www.youtube.com/@smkpgriwonoasri8087"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick('social', 'YouTube')}
                     className="w-10 h-10 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 text-black dark:text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform relative z-20 shadow-lg"
                     aria-label="YouTube"
                   >
@@ -940,6 +946,7 @@ export default function Home() {
                     href="https://wa.me/6285158333064"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick('contact', 'WhatsApp')}
                     className="w-10 h-10 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 text-black dark:text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform relative z-20 shadow-lg"
                     aria-label="WhatsApp"
                   >
@@ -983,6 +990,7 @@ export default function Home() {
                   href="https://www.tiktok.com/@smkpgriwonoasri"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackClick('social', 'TikTok Footer')}
                   className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-yellow-500 transition-colors"
                   aria-label="TikTok"
                 >
@@ -992,6 +1000,7 @@ export default function Home() {
                   href="https://www.instagram.com/@smkpgriwonoasri"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackClick('social', 'Instagram Footer')}
                   className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-yellow-500 transition-colors"
                   aria-label="Instagram"
                 >
@@ -1001,6 +1010,7 @@ export default function Home() {
                   href="https://www.youtube.com/@smkpgriwonoasri8087"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackClick('social', 'YouTube Footer')}
                   className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-yellow-500 transition-colors"
                   aria-label="YouTube"
                 >
@@ -1097,3 +1107,4 @@ export default function Home() {
     </div>
   )
 }
+

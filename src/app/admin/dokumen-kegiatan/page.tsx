@@ -219,7 +219,8 @@ export default function DokumenKegiatanPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to save')
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to save')
       }
 
       toast({

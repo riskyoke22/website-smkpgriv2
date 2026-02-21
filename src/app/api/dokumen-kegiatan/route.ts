@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
-
-const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,14 +9,14 @@ export async function GET(request: NextRequest) {
     const onlyActive = searchParams.get('active') === 'true'
 
     if (onlyActive) {
-      const dokumen = await (prisma as any).dokumenKegiatan.findFirst({
+      const dokumen = await db.dokumenKegiatan.findFirst({
         where: { status: true },
         orderBy: { createdAt: 'desc' }
       })
       return NextResponse.json(dokumen)
     }
 
-    const dokumen = await (prisma as any).dokumenKegiatan.findMany({
+    const dokumen = await db.dokumenKegiatan.findMany({
       orderBy: { createdAt: 'desc' }
     })
     return NextResponse.json(dokumen)
@@ -34,13 +32,13 @@ export async function POST(request: NextRequest) {
     const { judulKegiatan, deskripsi, fileJuklak, fileJuknis, status } = body
 
     if (status === true) {
-      await (prisma as any).dokumenKegiatan.updateMany({
+      await db.dokumenKegiatan.updateMany({
         where: { status: true },
         data: { status: false }
       })
     }
 
-    const dokumen = await (prisma as any).dokumenKegiatan.create({
+    const dokumen = await db.dokumenKegiatan.create({
       data: {
         judulKegiatan,
         deskripsi,
