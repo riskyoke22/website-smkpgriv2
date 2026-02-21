@@ -1,11 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, X, GraduationCap, Users, Building2, Newspaper, Image as ImageIcon, MapPin, Phone, Mail, Facebook, Instagram, Youtube, ChevronRight, BookOpen, Trophy, Target, Award, Clock, Wifi, Music, Video, Library, Store, Radio, CheckCircle, Star, Zap, Globe, Smartphone, Verified, MessageCircle, Network, Heart, Calendar, Calculator, Briefcase, FlaskConical, Sparkles, BarChart3 } from 'lucide-react'
+import { Menu, X, GraduationCap, Users, Building2, Newspaper, Image as ImageIcon, MapPin, Phone, Mail, Facebook, Instagram, Youtube, ChevronRight, BookOpen, Trophy, Target, Award, Clock, Wifi, Music, Video, Library, Store, Radio, CheckCircle, Star, Zap, Globe, Smartphone, Verified, MessageCircle, Network, Heart, Calendar, Calculator, Briefcase, FlaskConical, Sparkles, BarChart3, Loader2, FileText, Download, FileQuestion } from 'lucide-react'
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [beritaList, setBeritaList] = useState<any[]>([])
+  const [galeriList, setGaleriList] = useState<any[]>([])
+  const [loadingBerita, setLoadingBerita] = useState(true)
+  const [loadingGaleri, setLoadingGaleri] = useState(true)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +39,63 @@ export default function Home() {
     trackVisitor()
   }, [])
 
-  const scrollToSection = (id: string) => {
+  // Track click events
+  const trackClick = (contentType: string, contentName: string, contentId?: string) => {
+    // Non-blocking fetch to track click
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contentType,
+        contentId,
+        contentName
+      })
+    }).catch((error) => {
+      // Silently fail to not affect user experience
+      console.error('Failed to track click:', error)
+    })
+  }
+
+  // Fetch berita
+  useEffect(() => {
+    const fetchBerita = async () => {
+      try {
+        setLoadingBerita(true)
+        const response = await fetch('/api/berita')
+        if (response.ok) {
+          const data = await response.json()
+          setBeritaList(Array.isArray(data) ? data : [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch berita:', error)
+      } finally {
+        setLoadingBerita(false)
+      }
+    }
+    fetchBerita()
+  }, [])
+
+  // Fetch galeri
+  useEffect(() => {
+    const fetchGaleri = async () => {
+      try {
+        setLoadingGaleri(true)
+        const response = await fetch('/api/galeri')
+        if (response.ok) {
+          const data = await response.json()
+          setGaleriList(Array.isArray(data) ? data : [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch galeri:', error)
+      } finally {
+        setLoadingGaleri(false)
+      }
+    }
+    fetchGaleri()
+  }, [])
+
+  const scrollToSection = (id: string, label: string) => {
+    trackClick('nav', label, id)
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
@@ -103,7 +163,7 @@ export default function Home() {
               </a>
               <a
                 href="/admin"
-                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors text-sm"
+                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg font-medium transition-colors text-sm"
               >
                 Login
               </a>
@@ -151,7 +211,7 @@ export default function Home() {
               </a>
               <a
                 href="/admin"
-                className="block w-full text-left px-4 py-3.5 bg-yellow-500 text-white rounded-lg font-medium text-center hover:bg-yellow-600 transition-colors text-base"
+                className="block w-full text-left px-4 py-3.5 bg-yellow-500 text-black rounded-lg font-medium text-center hover:bg-yellow-600 transition-colors text-base"
               >
                 Login
               </a>
@@ -331,7 +391,7 @@ export default function Home() {
                 <p className="text-sm sm:text-base text-foreground/70 leading-relaxed mb-4 sm:mb-6 flex-grow">{program.desc}</p>
                 <a
                   href={program.link}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors text-sm font-medium"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors text-sm"
                 >
                   Lihat Detail
                   <ChevronRight className="w-4 h-4" />
@@ -582,58 +642,71 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {[
-              {
-                image: '/placeholder-news-1.jpg',
-                category: 'Prestasi',
-                title: 'Siswa SMK PGRI Wonoasri Juara 1 LKS Tingkat Provinsi',
-                date: '15 Januari 2025',
-                excerpt: 'Siswa jurusan Rekayasa Perangkat Lunak berhasil meraih juara pertama dalam kompetisi LKS...'
-              },
-              {
-                image: '/placeholder-news-2.jpg',
-                category: 'Kegiatan',
-                title: 'Kunjungan Industri ke Perusahaan Teknologi',
-                date: '10 Januari 2025',
-                excerpt: 'Siswa kelas XII melakukan kunjungan industri untuk mengenal langsung dunia kerja...'
-              },
-              {
-                image: '/placeholder-news-3.jpg',
-                category: 'Pengumuman',
-                title: 'Penerimaan Siswa Baru Tahun Ajaran 2026/2027',
-                date: '5 Januari 2025',
-                excerpt: 'SMK PGRI Wonoasri membuka pendaftaran siswa baru dengan berbagai program keahlian unggulan...'
-              },
-            ].map((news, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 group"
-              >
-                <div className="aspect-video bg-gradient-to-br from-blue-900/20 to-blue-800/10 flex items-center justify-center">
-                  <Newspaper className="w-12 h-12 sm:w-16 sm:h-16 text-blue-900/50" />
-                </div>
-                <div className="p-4 sm:p-6">
-                  <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-yellow-500 text-white text-xs sm:text-sm font-medium rounded-full mb-2 sm:mb-3">
-                    {news.category}
-                  </span>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 line-clamp-2 group-hover:text-blue-900 transition-colors">
-                    {news.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/60 mb-3 sm:mb-4">{news.date}</p>
-                  <p className="text-xs sm:text-sm sm:text-base text-foreground/70 leading-relaxed line-clamp-3">
-                    {news.excerpt}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {loadingBerita ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
+            </div>
+          ) : beritaList.length === 0 ? (
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 text-center">
+              <Newspaper className="w-16 h-16 text-blue-900/50 mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">Belum Ada Berita</h3>
+              <p className="text-foreground/60">Belum ada berita yang ditambahkan. Silakan tambahkan berita melalui admin panel.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+              {beritaList.slice(0, 3).map((berita, index) => (
+                <a
+                  key={berita.id}
+                  href={`/berita/${berita.id}`}
+                  onClick={() => trackClick('berita', berita.judul, berita.id)}
+                  className="group block"
+                >
+                  <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 h-full flex flex-col">
+                    {berita.gambar ? (
+                      <div className="aspect-video bg-gradient-to-br from-blue-900/20 to-blue-800/10 relative overflow-hidden">
+                        <img
+                          src={berita.gambar}
+                          alt={berita.judul}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-blue-900/20 to-blue-800/10 flex items-center justify-center">
+                        <Newspaper className="w-12 h-12 sm:w-16 sm:h-16 text-blue-900/50" />
+                      </div>
+                    )}
+                    <div className="p-4 sm:p-6 flex-grow">
+                      <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-yellow-500 text-white text-xs sm:text-sm font-bold rounded-full mb-2 sm:mb-3">
+                        Berita
+                      </span>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 line-clamp-2 group-hover:text-blue-900 transition-colors">
+                        {berita.judul}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-foreground/60 mb-3 sm:mb-4">
+                        {new Date(berita.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </p>
+                      <p className="text-xs sm:text-sm sm:text-base text-foreground/70 leading-relaxed line-clamp-3">
+                        {berita.isi}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
-          <div className="text-center mt-8 sm:mt-12">
-            <button className="px-6 py-2.5 sm:px-8 sm:py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all transform hover:scale-105 text-sm sm:text-base">
-              Lihat Semua Berita
-            </button>
-          </div>
+          {beritaList.length > 0 && (
+            <div className="text-center mt-8 sm:mt-12">
+              <a
+                href="/berita"
+                onClick={() => trackClick('cta', 'Lihat Semua Berita')}
+                className="inline-flex items-center gap-2 px-6 py-2.5 sm:px-8 sm:py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all transform hover:scale-105 text-sm sm:text-base"
+              >
+                Lihat Semua Berita
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -648,24 +721,55 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-              <div
-                key={item}
-                className="aspect-square bg-gradient-to-br from-blue-900/20 to-blue-800/10 rounded-lg sm:rounded-xl overflow-hidden group cursor-pointer hover:shadow-2xl transition-all"
-              >
-                <div className="w-full h-full flex items-center justify-center">
-                  <ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 text-blue-900/50 group-hover:scale-110 transition-transform" />
-                </div>
-              </div>
-            ))}
-          </div>
+          {loadingGaleri ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
+            </div>
+          ) : galeriList.length === 0 ? (
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 text-center">
+              <ImageIcon className="w-16 h-16 text-blue-900/50 mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">Belum Ada Galeri</h3>
+              <p className="text-foreground/60">Belum ada galeri yang ditambahkan. Silakan tambahkan galeri melalui admin panel.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {galeriList.slice(0, 8).map((galeri) => (
+                <a
+                  key={galeri.id}
+                  href="/galeri"
+                  onClick={() => trackClick('galeri', galeri.judul, galeri.id)}
+                  className="group block"
+                >
+                  <div className="aspect-square bg-gradient-to-br from-blue-900/20 to-blue-800/10 rounded-lg sm:rounded-xl overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-1">
+                    {galeri.gambar ? (
+                      <img
+                        src={galeri.gambar}
+                        alt={galeri.judul}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 text-blue-900/50 group-hover:scale-110 transition-transform" />
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
-          <div className="text-center mt-8 sm:mt-12">
-            <button className="px-6 py-2.5 sm:px-8 sm:py-3 border-2 border-blue-900 text-blue-900 font-semibold rounded-xl hover:bg-blue-900 hover:text-white transition-all text-sm sm:text-base">
-              Lihat Selengkapnya
-            </button>
-          </div>
+          {galeriList.length > 0 && (
+            <div className="text-center mt-8 sm:mt-12">
+              <a
+                href="/galeri"
+                onClick={() => trackClick('cta', 'Lihat Selengkapnya Galeri')}
+                className="inline-flex items-center gap-2 px-6 py-2.5 sm:px-8 sm:py-3 border-2 border-blue-900 text-blue-900 font-semibold rounded-xl hover:bg-blue-900 hover:text-white transition-all text-sm sm:text-base"
+              >
+                Lihat Selengkapnya
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -748,7 +852,7 @@ export default function Home() {
                     href="https://www.youtube.com/@smkpgriwonoasri8087"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 sm:w-14 sm:h-14 bg-red-600 text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform"
+                    className="w-10 h-10 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 text-black dark:text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform relative z-20 shadow-lg"
                     aria-label="YouTube"
                   >
                     <Youtube className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -757,7 +861,7 @@ export default function Home() {
                     href="https://wa.me/6285158333064"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 sm:w-14 sm:h-14 bg-green-500 text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform"
+                    className="w-10 h-10 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 text-black dark:text-white rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-110 transition-transform relative z-20 shadow-lg"
                     aria-label="WhatsApp"
                   >
                     <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
