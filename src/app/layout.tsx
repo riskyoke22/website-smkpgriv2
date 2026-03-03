@@ -14,24 +14,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "SMK PGRI Wonosari - Sekolah Menengah Kejuruan Unggulan",
+  description:
+    "Website resmi SMK PGRI Wonosari. Menyediakan informasi profil sekolah, jurusan, berita terbaru, galeri kegiatan, dan informasi akademik secara lengkap dan terpercaya.",
+  keywords: [
+    "SMK PGRI Wonosari",
+    "Sekolah Kejuruan Wonosari",
+    "SMK Wonosari",
+    "Berita SMK PGRI",
+    "Jurusan SMK",
+    "Sekolah Unggulan",
+    "Pendidikan Kejuruan"
+  ],
+  authors: [{ name: "SMK PGRI Wonosari" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "https://drive.google.com/file/d/1OR8i8agMyGA4R9yzxVyVuiTS3kovjLvm/view?usp=sharing",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "SMK PGRI Wonosari",
+    description:
+      "Sekolah Menengah Kejuruan yang unggul, berkarakter, dan siap mencetak generasi profesional dan berdaya saing.",
+    url: "https://smkpgriwonosari.sch.id",
+    siteName: "SMK PGRI Wonosari",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "SMK PGRI Wonosari",
+    description:
+      "Website resmi SMK PGRI Wonosari – Informasi profil, jurusan, berita, dan kegiatan sekolah.",
   },
 };
 
@@ -41,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
