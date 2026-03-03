@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
+import path, { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { getUploadRoot } from '@/lib/utils'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -12,6 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const uploadRoot = getUploadRoot();
 
     if (!file) {
       return NextResponse.json(
@@ -47,15 +49,18 @@ export async function POST(request: NextRequest) {
     
     if (ALLOWED_DOCUMENT_TYPES.includes(file.type)) {
       // Store PDF files in 'dokumen' folder
-      uploadDir = join(process.cwd(), 'public', 'uploads', 'dokumen')
+      // uploadDir = join(process.cwd(), 'public', 'uploads', 'dokumen')
+      uploadDir = path.join(uploadRoot, 'dokumen')
       fileUrl = `/uploads/dokumen/${uniqueFilename}`
     } else if (folderParam === 'dokumen') {
       // Use specified folder for images if needed
-      uploadDir = join(process.cwd(), 'public', 'uploads', 'dokumen')
+      // uploadDir = join(process.cwd(), 'public', 'uploads', 'dokumen')
+      uploadDir = path.join(uploadRoot, 'dokumen')
       fileUrl = `/uploads/dokumen/${uniqueFilename}`
     } else {
       // Default to 'programs' folder for images
-      uploadDir = join(process.cwd(), 'public', 'uploads', 'programs')
+      // uploadDir = join(process.cwd(), 'public', 'uploads', 'programs')
+      uploadDir = path.join(uploadRoot, 'programs')
       fileUrl = `/uploads/programs/${uniqueFilename}`
     }
     

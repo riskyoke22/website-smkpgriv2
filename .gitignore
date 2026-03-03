@@ -10,6 +10,8 @@ node_modules
 !.yarn/releases
 !.yarn/versions
 
+public/uploads
+
 # testing
 /coverage
 
@@ -53,3 +55,6 @@ server.log
 *.db
 *.db-*
 db/
+
+package-lock.json
+yarn.lock
