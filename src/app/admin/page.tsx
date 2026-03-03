@@ -116,9 +116,6 @@ export default function AdminLogin() {
             )}
           </button>
         </form>
-
-        <p className="text-center text-sm text-foreground/60 mt-8">
-          Default: admin / admin123
         </p>
       </div>
     </div>
