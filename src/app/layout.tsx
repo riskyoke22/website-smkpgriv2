@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SMK PGRI Wonosari - Sekolah Menengah Kejuruan Unggulan",
+  title: "SMK PGRI Wonosari",
   description:
     "Website resmi SMK PGRI Wonosari. Menyediakan informasi profil sekolah, jurusan, berita terbaru, galeri kegiatan, dan informasi akademik secara lengkap dan terpercaya.",
   keywords: [
@@ -24,25 +24,35 @@ export const metadata: Metadata = {
     "Berita SMK PGRI",
     "Jurusan SMK",
     "Sekolah Unggulan",
-    "Pendidikan Kejuruan"
+    "Pendidikan Kejuruan",
+    "SMK BIMARI",
   ],
   authors: [{ name: "SMK PGRI Wonosari" }],
   icons: {
-    icon: "https://drive.google.com/file/d/1OR8i8agMyGA4R9yzxVyVuiTS3kovjLvm/view?usp=sharing",
+    icon: "/logo.png",
   },
   openGraph: {
     title: "SMK PGRI Wonosari",
     description:
       "Sekolah Menengah Kejuruan yang unggul, berkarakter, dan siap mencetak generasi profesional dan berdaya saing.",
-    url: "https://smkpgriwonosari.sch.id",
+    url: "https://smkbimari.sch.id",
     siteName: "SMK PGRI Wonosari",
     type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "Logo SMK PGRI Wonosari",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "SMK PGRI Wonosari",
     description:
-      "Website resmi SMK PGRI Wonosari – Informasi profil, jurusan, berita, dan kegiatan sekolah.",
+      "Website resmi SMK PGRI Wonosari. Informasi profil, jurusan, berita, dan kegiatan sekolah.",
+    images: ["/logo.png"],
   },
 };
 
